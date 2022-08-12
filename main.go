@@ -1,6 +1,7 @@
 package main
 
 import (
+	"booking-app/validations"
 	"fmt"
 	"strings"
 )
@@ -23,7 +24,7 @@ func main() {
 			
 					firstName, lastName, email, userTickets := getUserInputs()
 
-					isValidName, isValidEmail, isValidTicketNumber := validateInputs(firstName, lastName, email, userTickets)
+					isValidName, isValidEmail, isValidTicketNumber := validations.ValidateInputs(firstName, lastName, email, userTickets, remainingTickets)
 					
 					if isValidName && isValidEmail && isValidTicketNumber {
 						
@@ -69,13 +70,6 @@ func pickFirstNames() []string {
 	return firstNames
 }
 
-func validateInputs(firstName string, lastName string, email string, userTickets uint) (bool, bool, bool) { // when returning multiple values, the return must be encapsulated
-		isValidName := len(firstName) >= 2 && len(lastName) >=2
-		isValidEmail := strings.Contains(email, "@")
-		isValidTicketNumber := userTickets > 0 && userTickets <= remainingTickets
-		return isValidName, isValidEmail, isValidTicketNumber // go can return multiple values
-}
-
 func getUserInputs() (string, string, string, uint){
 		var firstName string
 		var lastName string
@@ -97,11 +91,10 @@ func getUserInputs() (string, string, string, uint){
 		return firstName, lastName, email, userTickets
 }
 
-func createBookings(userTickets uint, firstName string, lastName string, email string) []string {
+func createBookings(userTickets uint, firstName string, lastName string, email string) {
 		remainingTickets = remainingTickets - userTickets		
 		bookings = append(bookings, firstName + " " + lastName)
 		
 		fmt.Printf("Thank you %v %v for booking %v tickets!\nYou will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
-		return bookings	
+		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)		
 }
