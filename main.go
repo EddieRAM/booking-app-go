@@ -3,7 +3,7 @@ package main
 import (
 	"booking-app/validations"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 // package level variables
@@ -11,7 +11,7 @@ import (
 const conferenceTickets int = 50 
 var conferenceName = "Go Conference" // sintax requires var to be accessible at the package level
 var remainingTickets uint = 50
-var bookings []string		// var bookings = []string{}, bookings := []string{}
+var bookings = make([]map[string]string, 0)	// var bookings = []string{}, bookings := []string{}
 
 func main() {
 				
@@ -62,12 +62,11 @@ func greetUsers() {
 }
 
 func pickFirstNames() []string {
-	firstNames := []string{}
-	for _, booking := range bookings { // index has been replaced with _, because it has never been used 
-			var names = strings.Fields(booking)	// strings.Fields => slice manipulation method					
-			firstNames = append(firstNames, names[0]) // appends firstNames slice with firstName
-	}
-	return firstNames
+		firstNames := []string{}
+		for _, booking := range bookings { // index has been replaced with _, because it has never been used							
+				firstNames = append(firstNames, booking["firstName"])
+		}
+		return firstNames
 }
 
 func getUserInputs() (string, string, string, uint){
@@ -92,8 +91,19 @@ func getUserInputs() (string, string, string, uint){
 }
 
 func createBookings(userTickets uint, firstName string, lastName string, email string) {
-		remainingTickets = remainingTickets - userTickets		
-		bookings = append(bookings, firstName + " " + lastName)
+		remainingTickets = remainingTickets - userTickets
+		
+		// create a map for a user
+		
+		var userData = make(map[string]string) // map[keys data types]values data types
+		userData["firstName"] = firstName
+		userData["lastName"] = lastName
+		userData["email"] = email
+		userData["numberOftickets"] = strconv.FormatUint(uint64(userTickets), 10) // need to convert uint into string
+		
+
+		bookings = append(bookings, userData)
+		fmt.Printf("List of bookings is %v\n", bookings)
 		
 		fmt.Printf("Thank you %v %v for booking %v tickets!\nYou will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
 		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)		

@@ -4,6 +4,7 @@ import (
 	"strings"
 )
 
+// Global variables are always capitalized
 func ValidateInputs(firstName string, lastName string, email string, userTickets uint, remainingTickets uint) (bool, bool, bool) { // when returning multiple values, the return must be encapsulated
 	isValidName := len(firstName) >= 2 && len(lastName) >=2
 	isValidEmail := strings.Contains(email, "@")
