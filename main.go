@@ -3,7 +3,6 @@ package main
 import (
 	"booking-app/validations"
 	"fmt"
-	"strconv"
 )
 
 // package level variables
@@ -11,10 +10,18 @@ import (
 const conferenceTickets int = 50 
 var conferenceName = "Go Conference" // sintax requires var to be accessible at the package level
 var remainingTickets uint = 50
-var bookings = make([]map[string]string, 0)	// var bookings = []string{}, bookings := []string{}
+var bookings = make([]UserData, 0)	// now bookings uses the struct UserData
 
-func main() {
-				
+// create a type struct to get store information with multiple datatypes
+
+type UserData struct {
+		firstName string
+		lastName string
+		email string
+		numberOftickets uint
+}
+
+func main() {				
 		
 		greetUsers() // conferenceName, conferenceTickets, remainingTickets comes from the package level
 
@@ -28,7 +35,8 @@ func main() {
 					
 					if isValidName && isValidEmail && isValidTicketNumber {
 						
-						createBookings(userTickets, firstName, lastName, email)						
+						createBookings(userTickets, firstName, lastName, email)
+						sendTicket(userTickets, firstName, lastName, email)					
 
 						firstNames := pickFirstNames()
 						fmt.Printf("The first names of bookings are: %v\n", firstNames)
@@ -64,7 +72,7 @@ func greetUsers() {
 func pickFirstNames() []string {
 		firstNames := []string{}
 		for _, booking := range bookings { // index has been replaced with _, because it has never been used							
-				firstNames = append(firstNames, booking["firstName"])
+				firstNames = append(firstNames, booking.firstName) // structs use dot notation
 		}
 		return firstNames
 }
@@ -93,18 +101,25 @@ func getUserInputs() (string, string, string, uint){
 func createBookings(userTickets uint, firstName string, lastName string, email string) {
 		remainingTickets = remainingTickets - userTickets
 		
-		// create a map for a user
-		
-		var userData = make(map[string]string) // map[keys data types]values data types
-		userData["firstName"] = firstName
-		userData["lastName"] = lastName
-		userData["email"] = email
-		userData["numberOftickets"] = strconv.FormatUint(uint64(userTickets), 10) // need to convert uint into string
-		
+		// assign values to the struct keys
+				
+		var userData = UserData {
+			firstName: firstName,
+			lastName: lastName,
+			email: email,
+			numberOftickets: userTickets,
+		}		
 
 		bookings = append(bookings, userData)
 		fmt.Printf("List of bookings is %v\n", bookings)
 		
 		fmt.Printf("Thank you %v %v for booking %v tickets!\nYou will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
 		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)		
+}
+
+func sendTicket(userTickets uint, firstName string, lastName string, email string) {
+	var ticket = fmt.Sprintf("%v ticket(s) for %v %v", userTickets, firstName, lastName)
+	fmt.Println("##########################")
+	fmt.Printf("Sending ticket\n.\n..\n...\n Congratulations! %v\n to email address %v was sent!\n", ticket, email)
+	fmt.Println("##########################")
 }
